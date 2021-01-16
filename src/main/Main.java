@@ -1,15 +1,12 @@
 package main;
 
-import java.awt.FontFormatException;
-import java.io.IOException;
-
-import frame.TestFrame;
+import frame.MainFrame;
 
 public class Main {
-	public Main() throws FontFormatException, IOException {
-		new TestFrame();
+	public Main() {
+		new MainFrame();
 	}
-	public static void main(String[] args) throws FontFormatException, IOException {
+	public static void main(String[] args) {
 		new Main();
 	}
 }

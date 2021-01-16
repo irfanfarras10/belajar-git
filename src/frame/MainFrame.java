@@ -1,15 +1,17 @@
 package frame;
 
 import java.awt.BorderLayout;
-import java.awt.Button;
 import java.awt.Color;
-import java.awt.Cursor;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.DecimalFormat;
+import java.awt.Cursor;
 
+import java.io.File;
+
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -20,134 +22,151 @@ import javax.swing.Timer;
 public class MainFrame extends JFrame{
 	
 	private JPanel mainPanel;
-	private JPanel buttonPanel;
+	
+	private JPanel timerPanel;
+	private JPanel buttonPanel; 
+	private JPanel countPanel; 
+	private JPanel statPanel; 
+	
 	private JLabel timerLabel;
+	private JButton timerButton;
+	private JLabel countLabel1;
+	private JLabel countLabel2;
+	private JLabel countLabel3;
+	private JLabel countLabel4;
 	private JLabel statLabel;
-	private JButton playPauseButton;
-	private JLabel pomodoro1;
-	private JLabel pomodoro2;
-	private JLabel pomodoro3;
-	private JLabel pomodoro4;
 	
-	private Timer timer;
+	private Font customFont;
 	
-	private int minute = 1;
+	private GraphicsEnvironment ge;
+	
+	private int minute = 25;
 	private int second = 0;
 	
-	String ddSecond, ddMinute;
-	DecimalFormat dFormat = new DecimalFormat("00");
-	
 	private boolean isPause = false;
-
+	
+	private Timer pomodoroTimer;
 	
 	public MainFrame() {
+	
+		//import font
+		try {
+			customFont = Font.createFont(Font.TRUETYPE_FONT, new File("res/Lato-Regular.ttf"));
+			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+			ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, new File("res/LatoRegular.ttf")));
+		} catch (Exception e) {
+			
+		} 
 		
-		ddSecond = dFormat.format(second);
-		ddMinute = dFormat.format(minute);
-		
-		mainPanel = new JPanel();
-		mainPanel.setLayout(new BorderLayout());
-		
-		buttonPanel = new JPanel();
-		buttonPanel.setLayout(new FlowLayout(0, 0, 0));
-		
-		timerLabel = new JLabel();
-		timerLabel.setFont(new Font("res/Lato-Regular.ttf", Font.PLAIN , 58));
-		timerLabel.setText(ddMinute + ":" + ddSecond);
-		timerLabel.setHorizontalAlignment(JLabel.CENTER);
+		timerLabel = new JLabel("25:00");
+		timerLabel.setFont(customFont.deriveFont(50F));
 		timerLabel.setForeground(Color.BLACK);
 		
-		statLabel = new JLabel();
-		statLabel.setFont(new Font("res/Lato-Regular.ttf", Font.PLAIN, 16));
-		statLabel.setText("view stats");
-		statLabel.setHorizontalAlignment(JLabel.RIGHT);
+		countLabel1 = new JLabel(new ImageIcon("res/twotone_dot.png"));
+		countLabel2 = new JLabel(new ImageIcon("res/outline_dot.png"));
+		countLabel3 = new JLabel(new ImageIcon("res/outline_dot.png"));
+		countLabel4 = new JLabel(new ImageIcon("res/outline_dot.png"));
+		
+		statLabel = new JLabel("view stats");
+		statLabel.setFont(customFont.deriveFont(12F));
+		statLabel.setForeground(Color.BLACK);
 		statLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+	
+		timerButton = new JButton(new ImageIcon("res/Pause.png"));
+		timerButton.setBackground(null);
+		timerButton.setBorder(null);
+		timerButton.setContentAreaFilled(false);
+		timerButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		
-		pomodoro1 = new JLabel(new ImageIcon("res/twotone_dot.png"));
-		pomodoro2 = new JLabel(new ImageIcon("res/outline_dot.png"));
-		pomodoro3 = new JLabel(new ImageIcon("res/outline_dot.png"));
-		pomodoro4 = new JLabel(new ImageIcon("res/outline_dot.png"));
+		mainPanel = new JPanel();
+		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+		mainPanel.setBackground(Color.white);
+
+		timerPanel = new JPanel();
+		timerPanel.setLayout(new FlowLayout());
+		timerPanel.add(timerLabel);
+		timerPanel.setBackground(null);
 		
-		playPauseButton = new JButton(new ImageIcon("res/pause.png"));
-		playPauseButton.setContentAreaFilled(false);
-		playPauseButton.setBorder(null);
-		playPauseButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-			
-		buttonPanel.add(playPauseButton);
-		buttonPanel.add(pomodoro1);
-		buttonPanel.add(pomodoro2);
-		buttonPanel.add(pomodoro3);
-		buttonPanel.add(pomodoro4);
+		buttonPanel = new JPanel();
+		buttonPanel.setLayout(new FlowLayout());
+		buttonPanel.add(timerButton);
+		buttonPanel.setBackground(null);
 		
+		countPanel = new JPanel();
+		countPanel.setLayout(new FlowLayout());
+		countPanel.setBackground(null);
+		countPanel.add(countLabel1);
+		countPanel.add(countLabel2);
+		countPanel.add(countLabel3);
+		countPanel.add(countLabel4);
+	
+		statPanel = new JPanel();
+		statPanel.setLayout(new BorderLayout(250, 0));
+		statPanel.setBackground(null);
+		statPanel.add(statLabel, BorderLayout.EAST);
 		
-		mainPanel.add(timerLabel, BorderLayout.NORTH);
-		mainPanel.add(buttonPanel, BorderLayout.CENTER);
-		mainPanel.add(statLabel, BorderLayout.SOUTH);
-			
-		buttonPanel.setBackground(new Color(229, 80, 57));
-		mainPanel.setBackground(new Color(229, 80, 57));
-		
-		playPauseButton.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-		
-				if(isPause == true) {
-					playPauseButton.setIcon(new ImageIcon("res/pause.png"));
-					timer.start();
-					isPause = false;
-				}
-				else if(isPause == false) {
-					playPauseButton.setIcon(new ImageIcon("res/play.png"));
-					timer.stop();
-					isPause = true;
-				}
-				
-			}
-		});
-		
-		setTimer();
+		mainPanel.add(timerPanel);
+		mainPanel.add(buttonPanel);
+		mainPanel.add(countPanel);
+		mainPanel.add(statPanel);
 		
 		add(mainPanel);
 		setTitle("Pomodoro");
 		setIconImage(new ImageIcon("res/tomato.png").getImage());
-		setLocationRelativeTo(null);
 		setResizable(false);
-		setSize(300, 200);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		pack();
+		setLocationRelativeTo(null);
 		setVisible(true);
-	
-	}
-	
-	private void setTimer() {
 		
-		timer = new Timer(1000, new ActionListener() {
-			
+		//play timer
+		setTimer();
+
+		
+		//play pause action listener
+		timerButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				
-				timerLabel.setText(ddMinute + ":" + ddSecond);
+				if(isPause) {
+					isPause = false;
+					timerButton.setIcon(new ImageIcon("res/play.png"));
+					pomodoroTimer.stop();
+				}
+				else if (!isPause){
+					isPause = true;
+					timerButton.setIcon(new ImageIcon("res/pause.png"));
+					pomodoroTimer.start();
+				}
+			}
+		});
+	}
+	
+	public void setTimer() {
+		pomodoroTimer = new Timer(1000, new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String secondTimer = String.format("%02d", second);
+				String minuteTimer = String.format("%02d", minute);
+				
+				//if work time end
+				if(minute == 0 && second == 0) {
+					pomodoroTimer.stop();
+				}
 				
 				if(second == 0) {
-					minute--;
 					second = 60;
-				}
-			
-				second--;
-				
-				if(minute == 0 && second == 0 ) {
-					minute = 25;
-					second = 0;
+					minute--;
 				}
 				
-				ddSecond = dFormat.format(second);
-				ddMinute = dFormat.format(minute);
-			
+				second--;	
+				timerLabel.setText(minuteTimer + ":" + secondTimer);
 			}
 		});
 		
-		timer.start();
+		pomodoroTimer.start();
 	}
-}	
+	
+}
